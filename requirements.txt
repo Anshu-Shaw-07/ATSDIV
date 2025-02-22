@@ -2,4 +2,6 @@ PyPDF2
 nltk
 pandas
 langchain_groq
+matplotlib
+
 
