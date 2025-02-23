@@ -14,19 +14,20 @@ import matplotlib.pyplot as plt
 # Download required NLTK data (using wordpunct_tokenize avoids the 'punkt_tab' issue)
 nltk.download('stopwords')
 
-# Predefined ATS keywords for job portal recommendations
+# Predefined ATS keywords for job portal recommendations and skill extraction
 predefined_ats_keywords = {
     "python", "data", "analysis", "machine", "learning", "sql", "excel",
     "communication", "teamwork", "project", "management", "problem-solving", "leadership"
 }
 
-# Define navigation options
+# Define navigation options (new option added for Cold Email Generator)
 options = [
     "🏠 Home",
     "👤 Personal ATS Score Checker",
-    "📊 ATS Score Check",
+    "📊 ATS Score Checker(Corporate)",
     "🚀 Job Recommendations",
-    "✨ Resume Enhancer"
+    "✨ Resume Enhancer",
+    "📧 Cold Email Generator"
 ]
 
 # Update navigation if a redirect is requested
@@ -45,9 +46,10 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📝 Instructions")
 st.sidebar.write("1. For **Home**, view our landing page.")
 st.sidebar.write("2. For **Personal ATS Score Checker**, upload your resume and enter a job description to check your personal ATS score. Use the navigation buttons to jump to Resume Enhancer or Job Recommendations.")
-st.sidebar.write("3. For **ATS Score Check**, upload your resume(s) for bulk analysis.")
+st.sidebar.write("3. For **ATS Score Checker**, upload your resume(s) for bulk analysis.")
 st.sidebar.write("4. For **Job Recommendations**, upload your resume to get job portal suggestions.")
 st.sidebar.write("5. For **Resume Enhancer**, upload your resume to receive improvement suggestions.")
+st.sidebar.write("6. For **Cold Email Generator**, upload your resume to generate a professional cold email based solely on the skills mentioned in your resume.")
 
 # Function to extract text from the uploaded file
 def extract_text_from_file(uploaded_file):
@@ -71,7 +73,7 @@ def compute_keyword_frequencies(text, ats_keywords):
 
 # Main UI
 if option == "🏠 Home":
-    st.title("TOP HIRE 👨‍💻💡📝")
+    st.title(" CareerFit 👨‍💻💡📝")
     st.title("Smart Resumes. Smart Applications. Smart Hires.🧠👨‍🎓")
 
 # Personal ATS Score Checker page
@@ -119,8 +121,8 @@ elif option == "👤 Personal ATS Score Checker":
             st.error("Please upload a resume file and enter a job description.")
 
 # ATS Score Check page (for multiple resumes)
-elif option == "📊 ATS Score Check":
-    st.title("📊 ATS Score Check")
+elif option == "📊 ATS Score Checker(Corporate)":
+    st.title("📊 ATS Score Checker(Corporate)")
     st.write("Upload your resume file(s) below and enter a job description for bulk ATS keyword extraction.")
     resume_files = st.file_uploader("Upload your resume files (up to 3) 📂", 
                                     type=["txt", "pdf"], key="resume_bulk", accept_multiple_files=True)
@@ -215,6 +217,35 @@ elif option == "✨ Resume Enhancer":
                 )
                 groq_response = llm.invoke(prompt)
                 st.markdown("## Resume Enhancement Suggestions ✨")
+                st.write(groq_response.content)
+            else:
+                st.error("Please upload a valid resume file.")
+
+# Cold Email Generator page (updated: based solely on resume skills)
+elif option == "📧 Cold Email Generator":
+    st.title("📧 Cold Email Generator")
+    st.write("Upload your resume to generate a professional cold email based on the skills mentioned in your resume.")
+    resume_file = st.file_uploader("Upload your resume file 📂", type=["txt", "pdf"], key="resume_coldemail")
+    if st.button("Generate Cold Email"):
+        with st.spinner("Generating your cold email... ⏳"):
+            time.sleep(0.5)
+            resume_text = extract_text_from_file(resume_file)
+            if resume_text:
+                # Extract skills based on predefined ATS keywords
+                matched_skills = predefined_ats_keywords.intersection(set(re.findall(r'\w+', resume_text.lower())))
+                llm = ChatGroq(
+                    temperature=0.6,
+                    groq_api_key='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',
+                    model_name="llama-3.2-1b-preview"
+                )
+                prompt = (
+                    f"Based on the resume content provided below:\n\n{resume_text}\n\n"
+                    f"The identified skills from the resume are: {', '.join(matched_skills)}.\n\n"
+                    "Please generate a professional cold email that highlights these skills, introduces the candidate, "
+                    "and expresses interest in job opportunities. The email should be tailored to hiring companies."
+                )
+                groq_response = llm.invoke(prompt)
+                st.markdown("## Generated Cold Email")
                 st.write(groq_response.content)
             else:
                 st.error("Please upload a valid resume file.")
