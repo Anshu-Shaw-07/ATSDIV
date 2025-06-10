@@ -179,7 +179,7 @@ elif option == "🚀 Job Recommendations":
                 llm = ChatGroq(
                     temperature=0.6, 
                     groq_api_key='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', 
-                    model_name="llama-3.2-1b-preview"
+                    model_name="meta-llama/llama-prompt-guard-2-86m"
                 )
                 prompt = (
                     f"Based on the resume analysis which found the skills: {', '.join(matched_keywords)}, "
