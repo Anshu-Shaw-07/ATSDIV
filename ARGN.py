@@ -179,7 +179,7 @@ elif option == "🚀 Job Recommendations":
                 llm = ChatGroq(
                     temperature=0.6, 
                     groq_api_key='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', 
-                    model_name="meta-llama/llama-prompt-guard-2-86m"
+                    model_name="whisper-large-v3-turbo"
                 )
                 prompt = (
                     f"Based on the resume analysis which found the skills: {', '.join(matched_keywords)}, "
@@ -208,7 +208,7 @@ elif option == "✨ Resume Enhancer":
                 llm = ChatGroq(
                     temperature=0.6,
                     groq_api_key='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',
-                    model_name="llama-3.2-1b-preview"
+                    model_name="whisper-large-v3-turbo"
                 )
                 prompt = (
                     f"Below is the resume provided:\n\n{resume_text}\n\n"
@@ -236,7 +236,7 @@ elif option == "📧 Cold Email Generator":
                 llm = ChatGroq(
                     temperature=0.6,
                     groq_api_key='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',
-                    model_name="llama-3.2-1b-preview"
+                    model_name="whisper-large-v3-turbo"
                 )
                 prompt = (
                     f"Based on the resume content provided below:\n\n{resume_text}\n\n"
